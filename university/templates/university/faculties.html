@@ -1,0 +1,11 @@
+{% if faculty_list and chosen_university %}
+    <ul>
+    {% for f in faculty_list %}
+        <li><a href="{%  url 'university:faculty' chosen_university.id f.id %}"> {{ f.id }}.  {{ f.name }}  {{ f.total_rank }}</a></li>
+    {% endfor %}
+    </ul>
+    <br>
+    <p><a href="{% url 'university:index' %}">Back to Index</a> </p>
+{% else %}
+    <p>Faculty List is empty!</p>
+{% endif %}

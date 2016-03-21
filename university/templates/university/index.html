@@ -1,0 +1,10 @@
+{% if university_list %}
+    <ul>
+    {% for u in university_list %}
+        <li><a href="{% url 'university:university' u.id %}"> {{ u.id }}.  {{ u.name }} </a> </li>
+    {% endfor %}
+    </ul>
+
+{% else %}
+    <p>University List is empty!</p>
+{% endif %}
