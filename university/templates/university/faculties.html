@@ -1,11 +1,123 @@
-{% if faculty_list and chosen_university %}
-    <ul>
-    {% for f in faculty_list %}
-        <li><a href="{%  url 'university:faculty' chosen_university.id f.id %}"> {{ f.id }}.  {{ f.name }}  {{ f.total_rank }}</a></li>
-    {% endfor %}
-    </ul>
+
+{% load i18n admin_static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>Faculties view</title>
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
+<link rel="stylesheet" type="text/css" href="{% static "css/additions.css" %}" />
+ <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+
+<script type="text/javascript" src="{% static "admin/js/core.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/vendor/jquery/jquery.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/jquery.init.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/admin/RelatedObjectLookups.js"%}"></script>
+<script type="text/javascript" src="{% static "admin/js/actions.js"%}"></script>
+<script type="text/javascript" src="{% static "admin/js/urlify.js"%}"></script>
+<script type="text/javascript" src="{% static "admin/js/prepopulate.js"%}"></script>
+<script type="text/javascript" src="{% static "admin/js/vendor/xregexp/xregexp.min.js"%}"></script>
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+
+{% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+{% load i18n %}
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+  data-admin-utc-offset="{% now "Z" %}">
+
+<!-- Container -->
+<div id="container">
+
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        <h1>Faculties of {% with object_list|first as first_object %}   {{ first_object.university }} {% endwith %} view </h1>
+        </div>
+
+        {% block nav-global %}{% endblock %}
+    </div>
+    <!-- END Header -->
+
+
+
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Click on the faculty to see detail indicators view</h1>{% endif %}{% endblock %}
+
+    <div class="results">
+<table id="result_list">
+<thead>
+<tr>
+
+<th scope="col" {{ header.class_attrib }}>
+   {% if header.sortable %}
+     {% if header.sort_priority > 0 %}
+       <div class="sortoptions">
+         <a class="sortremove" href="{{ header.url_remove }}" title="{% trans "Remove from sorting" %}"></a>
+         {% if num_sorted_fields > 1 %}<span class="sortpriority" title="{% blocktrans with priority_number=header.sort_priority %}Sorting priority: {{ priority_number }}{% endblocktrans %}">{{ header.sort_priority }}</span>{% endif %}
+         <a href="{{ header.url_toggle }}" class="toggle {% if header.ascending %}ascending{% else %}descending{% endif %}" title="{% trans "Toggle sorting" %}"></a>
+       </div>
+     {% endif %}
+   {% endif %}
+   <div class="text"><a href="{{ header.url_primary }}">Faculty Name</a></div>
+   <div class="clear"></div>
+</th>
+
+<th scope="col" {{ header.class_attrib }}>
+   {% if header.sortable %}
+     {% if header.sort_priority > 0 %}
+       <div class="sortoptions">
+         <a class="sortremove" href="{{ header.url_remove }}" title="{% trans "Remove from sorting" %}"></a>
+         {% if num_sorted_fields > 1 %}<span class="sortpriority" title="{% blocktrans with priority_number=header.sort_priority %}Sorting priority: {{ priority_number }}{% endblocktrans %}">{{ header.sort_priority }}</span>{% endif %}
+         <a href="{{ header.url_toggle }}" class="toggle {% if header.ascending %}ascending{% else %}descending{% endif %}" title="{% trans "Toggle sorting" %}"></a>
+       </div>
+     {% endif %}
+   {% endif %}
+   <div class="text"><a href="{{ header.url_primary }}">Short name</a></div>
+   <div class="clear"></div>
+</th>
+
+<th scope="col" {{ header.class_attrib }}>
+
+       <div class="sortoptions">
+         <a class="sortremove" href="?o=" title="{% trans "Remove from sorting" %}"></a>
+         {% if num_sorted_fields > 1 %}<span class="sortpriority" title="{% blocktrans with priority_number=header.sort_priority %}Sorting priority: {{ priority_number }}{% endblocktrans %}">{{ header.sort_priority }}</span>{% endif %}
+         <a href="{{ header.url_toggle }}" class="toggle {% if header.ascending %}ascending{% else %}descending{% endif %}" title="{% trans "Toggle sorting" %}"></a>
+       </div>
+
+   <div class="text"><a href="?o=3">Total Rank</a></div>
+   <div class="clear"></div>
+</th>
+</tr>
+</thead>
+<tbody>
+
+  {% for f in object_list %}
+                <tr class="{% cycle 'row1' 'row2' %}"><td><a href="{{ request.path }}{{ f.id  }}">  {{ f.name }}</a> </td><td>{{ f.shortcut }}</td> <td> {{ f.total_rank }}</td></tr>
+            {% endfor %}
+
+</tbody>
+</table>
+</div>
     <br>
-    <p><a href="{% url 'university:index' %}">Back to Index</a> </p>
-{% else %}
-    <p>Faculty List is empty!</p>
-{% endif %}
+
+            <div class="submit-row">
+            <a class="back-button" href="{% url 'university:index' %}"  >Back to Index Page </a>
+            </div>
+
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    {% block footer %}<div id="footer"></div>{% endblock %}
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+

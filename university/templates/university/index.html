@@ -1,10 +1,72 @@
-{% if university_list %}
-    <ul>
-    {% for u in university_list %}
-        <li><a href="{% url 'university:university' u.id %}"> {{ u.id }}.  {{ u.name }} </a> </li>
-    {% endfor %}
-    </ul>
+{% load i18n admin_static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>Welcome to home page</title>
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelist.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
+{% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
 
-{% else %}
-    <p>University List is empty!</p>
-{% endif %}
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+  data-admin-utc-offset="{% now "Z" %}">
+
+<!-- Container -->
+<div id="container">
+
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        <h1>Welcome to University Internationalization ranking page</h1>
+        </div>
+
+        {% block nav-global %}{% endblock %}
+    </div>
+    <!-- END Header -->
+ <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Click on the university to see faculties view</h1>{% endif %}{% endblock %}
+
+
+<div class="results">
+<table id="result_list">
+<thead>
+<tr>
+{% for header in result_headers %}
+<th scope="col" {{ header.class_attrib }}>
+   {% if header.sortable %}
+     {% if header.sort_priority > 0 %}
+       <div class="sortoptions">
+         <a class="sortremove" href="{{ header.url_remove }}" title="{% trans "Remove from sorting" %}"></a>
+         {% if num_sorted_fields > 1 %}<span class="sortpriority" title="{% blocktrans with priority_number=header.sort_priority %}Sorting priority: {{ priority_number }}{% endblocktrans %}">{{ header.sort_priority }}</span>{% endif %}
+         <a href="{{ header.url_toggle }}" class="toggle {% if header.ascending %}ascending{% else %}descending{% endif %}" title="{% trans "Toggle sorting" %}"></a>
+       </div>
+     {% endif %}
+   {% endif %}
+   <div class="text">{% if header.sortable %}<a href="{{ header.url_primary }}">{{ header.text|capfirst }}</a>{% else %}<span>{{ header.text|capfirst }}</span>{% endif %}</div>
+   <div class="clear"></div>
+</th>{% endfor %}
+</tr>
+</thead>
+<tbody>
+ {% for u in object_list %}
+        <tr class="{% cycle 'row1' 'row2' %}"><td><a href="{% url 'university:faculties' u.id %}">  {{ u.name }} </a></td> </tr>
+    {% endfor %}
+
+</tbody>
+</table>
+</div>
+
+        <br class="clear" />
+    </div>
+
+   {% block footer %}<div id="footer"></div>{% endblock %}
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+
