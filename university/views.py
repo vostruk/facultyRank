@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import sys
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from .models import University, Faculty, FacultyIndicators, Indicator
+from .models import University, Faculty, FacultyIndicators, Indicator, IndicatorIntervals
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.template import *
-
+from chartit import DataPool, Chart
+from datetime import datetime
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -31,5 +32,76 @@ class FacultyIndicatorsView(generic.ListView):
         context = super(FacultyIndicatorsView, self).get_context_data(**kwargs)
         context['chosen_faculty'] = get_object_or_404(Faculty, pk=self.kwargs['faculty_id_chose'])
         context['faculty_indicators_list'] = get_list_or_404(FacultyIndicators, faculty_id=self.kwargs['faculty_id_chose'])
-        context['indicators_list'] = Indicator.objects.all()
+        indicators_list = Indicator.objects.all()
+        context['indicators_list'] = indicators_list
+        context['times_list'] = IndicatorIntervals.objects.order_by('-end_date')
+        times = IndicatorIntervals.objects.all()
+
+        seriesAll = []
+        termsAll = {}
+
+        for i in indicators_list:
+            seriesAll.append({'options': {
+                   'source': FacultyIndicators.objects.filter(indicator_id=i.id, faculty_id=self.kwargs['faculty_id_chose'])},
+                  'terms': [
+                      {str(i.shortcut):'value'},
+                      {'time_interval'+str(i.id):'time_interval__end_date'}
+
+                    ]})
+            termsAll['time_interval'+str(i.id)] = [str(i.shortcut)]
+
+        series_optAll = [{'options':{
+                          'type': 'line',
+                          'stacking': False},
+                        'terms': termsAll}]
+
+        indicatorsChartData = \
+            DataPool(
+               series=seriesAll
+              )
+
+        #Step 2: Create the Chart objec
+        chtIndicatorsTime = Chart(
+                datasource = indicatorsChartData,
+                series_options = series_optAll,
+                chart_options =
+                  {'title': {
+                       'text': 'Indicators of university'},
+                   'xAxis': {
+                        'title': {
+                           'text': 'Time period'}}}#,
+             #   x_sortf_mapf_mts=(None, lambda i: datetime.fromtimestamp(i).strftime("%H:%M"), False)
+        )
+
+
+
+        last_period = IndicatorIntervals.objects.order_by('-end_date')[0]
+
+        indicatorsPieData = \
+            DataPool(
+                series=
+                [{'options': {
+                    'source':FacultyIndicators.objects.filter(time_interval_id=last_period.id, faculty_id=self.kwargs['faculty_id_chose'])},
+                  'terms': [
+                    'indicator__shortcut',
+                    'value']}
+                 ]
+              )
+        chtPie = Chart(
+            datasource = indicatorsPieData,
+            series_options =
+              [{'options':{
+                  'type': 'pie',
+                  'stacking': False},
+                'terms':{
+                  'indicator__shortcut': [
+                    'value']
+                  }}],
+            chart_options =
+              {'title': {
+                   'text': 'Udzial wskazkikow w ogolnym rankingu'}},
+        )
+        context['indicatorsChart'] = [chtIndicatorsTime, chtPie]
         return context
+
+

@@ -42,14 +42,23 @@ class Indicator(models.Model):
         return self.shortcut
 
 
+class IndicatorIntervals(models.Model):
+    start_date = models.DateField('Interval start date', default=datetime.date.today)
+    end_date = models.DateField('Interval end date', default=datetime.date.today)
+    comment = models.TextField(default="")
+
+    def __str__(self):
+        return str(self.start_date.month) + ":" + str(self.start_date.year) + " - " + \
+               str(self.end_date.month) + ":" + str(self.end_date.year)
+
+
 class FacultyIndicators(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     indicator = models.ForeignKey(Indicator, on_delete=models.CASCADE)
     significance_coefficient = models.IntegerField(default=0)
     ease_coefficient = models.IntegerField(default=0)
     value = models.FloatField(default=0)
-    time_interval_start = models.DateField('Interval start date', default=datetime.date.today)
-    time_interval_end = models.DateField('Interval end date', default=datetime.date.today)
+    time_interval = models.ForeignKey(IndicatorIntervals, on_delete=models.CASCADE)
     comment = models.TextField(default="")
     pub_date = models.DateField('date published', default=datetime.date.today)
 
@@ -78,18 +87,34 @@ def faculty_post_save(sender, instance, created, *args, **kwargs):
     if created:
         print("Trigger for indicators after new faculty was created")
         #create a group with a faculty name to be used for faculty staff
-        new_group, group_created = Group.objects.get_or_create(name=instance.name + '-' +
-                                                                    instance.university.name+"$"+str(instance.id))
-        if group_created:
-            new_group.save()
+        #new_group, group_created = Group.objects.get_or_create(name=instance.name + '-' +
+        #                                                            instance.university.name+"$"+str(instance.id))
+        #if group_created:
+        #    new_group.save()
         #trigger a list of indicators for this faculty
+        intervals = IndicatorIntervals.objects.all()
         indicators = Indicator.objects.all()
         for i in indicators:
-            new_relation = FacultyIndicators.objects.create(faculty_id=instance.id, indicator_id=i.id,
-                                                            significance_coefficient = 0, ease_coefficient=0,
-                                                            time_interval_start=datetime.date.today(),
-                                                            time_interval_end=datetime.date.today(), comment="",
-                                                            value = 0.0, pub_date = datetime.datetime.now())
+            for inter in intervals:
+                new_relation = FacultyIndicators.objects.create(faculty_id=instance.id, indicator_id=i.id,
+                                                                significance_coefficient = 0, ease_coefficient=0,
+                                                                value = 0.0, time_interval_id=inter.id,
+                                                                pub_date = datetime.datetime.now())
+            new_relation.save()
+
+
+@receiver(signals.post_save, sender=IndicatorIntervals)
+def interval_post_save(sender, instance, created, *args, **kwargs):
+    if created:
+        print("Trigger for faculties after new indicator was created")
+        faculties = Faculty.objects.all()
+        indicators = Indicator.objects.all()
+        for f in faculties:
+            for i in indicators:
+                new_relation = FacultyIndicators.objects.create(faculty_id=f.id, indicator_id=i.id,
+                                                                significance_coefficient = 0, ease_coefficient=0,
+                                                                value = 0.0, time_interval_id = instance.id,
+                                                                pub_date = datetime.datetime.now())
             new_relation.save()
 
 
@@ -98,12 +123,13 @@ def indicator_post_save(sender, instance, created, *args, **kwargs):
     if created:
         print("Trigger for faculties after new indicator was created")
         faculties = Faculty.objects.all()
+        intervals = IndicatorIntervals.objects.all()
         for f in faculties:
-            new_relation = FacultyIndicators.objects.create(faculty_id=f.id, indicator_id=instance.id,
-                                                            significance_coefficient = 0, ease_coefficient=0,
-                                                            time_interval_start=datetime.date.today(),
-                                                            time_interval_end=datetime.date.today(), comment="",
-                                                            value = 0.0, pub_date = datetime.datetime.now())
+            for i in intervals:
+                new_relation = FacultyIndicators.objects.create(faculty_id=f.id, indicator_id=instance.id,
+                                                                significance_coefficient = 0, ease_coefficient=0,
+                                                                value = 0.0, time_interval_id = i.id,
+                                                                pub_date = datetime.datetime.now())
             new_relation.save()
 
 
