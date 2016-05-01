@@ -8,66 +8,29 @@ from django.test.utils import setup_test_environment
 setup_test_environment()
 
 
+def create_random_university(n):
+    return University.objects.create(name=n, shortcut=n)
 def create_random_faculty(n, u):
     return Faculty.objects.create(name=n, shortcut=n, university=u)
 
 
 class FacultiesViewTests(TestCase):
-    def test_index_view_with_no_questions(self):
-        """
-        If no questions exist, an appropriate message should be displayed.
+    def test_index_view_with_no_universities(self):
 
-        response = self.client.get(reverse('polls:index'))
+        #If no universities added yet, an appropriate message should be shown.
+        response = self.client.get(reverse('university:index'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No polls are available.")
-        self.assertQuerysetEqual(response.context['latest_question_list'], [])
+        self.assertContains(response, "No universities added yet")
+        self.assertQuerysetEqual(response.context['object_list'], [])
 
-    def test_index_view_with_a_past_question(self):
+    def test_index_view_with_a_university(self):
 
-        Questions with a pub_date in the past should be displayed on the
-        index page.
-
-        create_question(question_text="Past question.", days=-30)
-        response = self.client.get(reverse('polls:index'))
+        uni = create_random_university("Politechnika Warszawska")
+        fac = create_random_faculty("EiTI", uni )
+        response = self.client.get(reverse('university:index'))
         self.assertQuerysetEqual(
-            response.context['latest_question_list'],
-            ['<Question: Past question.>']
+            response.context['object_list'],
+            ['<University: Politechnika Warszawska>']
         )
-"""
-    def test_index_view_with_a_future_question(self):
-        """
-        Questions with a pub_date in the future should not be displayed on
-        the index page.
-
-        create_question(question_text="Future question.", days=30)
-        response = self.client.get(reverse('polls:index'))
-        self.assertContains(response, "No polls are available.",
-                            status_code=200)
-        self.assertQuerysetEqual(response.context['latest_question_list'], [])
-"""
-    def test_index_view_with_future_question_and_past_question(self):
-        """
-        Even if both past and future questions exist, only past questions
-        should be displayed.
-
-        create_question(question_text="Past question.", days=-30)
-        create_question(question_text="Future question.", days=30)
-        response = self.client.get(reverse('polls:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_question_list'],
-            ['<Question: Past question.>']
-        )
-"""
-    def test_index_view_with_two_past_questions(self):
-        """
-        The questions index page may display multiple questions.
-
-        create_question(question_text="Past question 1.", days=-30)
-        create_question(question_text="Past question 2.", days=-5)
-        response = self.client.get(reverse('polls:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_question_list'],
-            ['<Question: Past question 2.>', '<Question: Past question 1.>']
-        )
-
-"""
+        #teraz logowanie użytkownika
+        #c.login(username='fred', password='secret')

@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.shortcuts import get_list_or_404
 from django.db.models import Q
-
+from django.utils.translation import ugettext_lazy as _
 
 class University(models.Model):
     name = models.CharField(max_length=200)
@@ -18,38 +18,54 @@ class University(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = _('Uniwersytet')
+        verbose_name_plural = _('Uniwersytety')
+
 
 class Faculty(models.Model):
-    name = models.CharField(max_length=200)
-    shortcut = models.CharField(max_length=50)
+    name = models.CharField(max_length=200, verbose_name = _('Nazwa'))
+    shortcut = models.CharField(max_length=50, verbose_name = _('Nazwa skrócona'))
     total_rank = models.FloatField(default=0)
-    university = models.ForeignKey(University, on_delete=models.CASCADE)
-    faculty_managers = models.ManyToManyField(User)
+    university = models.ForeignKey(University, on_delete=models.CASCADE, verbose_name = _('Uniwersytet'))
+    faculty_managers = models.ManyToManyField(User, verbose_name = _('Administratorzy wydziału'))
 
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = _('Wydział')
+        verbose_name_plural = _('Wydziały')
+
 
 class Indicator(models.Model):
-    given_id = models.CharField(max_length=10, default="", unique=True)
-    name = models.TextField()
-    shortcut = models.CharField(max_length=50)
-    default_value = models.FloatField(default=0)
-    scaling_factor = models.FloatField(default=1.0)
-    pub_date = models.DateField('date published', default=datetime.date.today)
+    given_id = models.CharField(max_length=10, default="", unique=True, verbose_name = _('Nadany identyfikator'))
+    name = models.TextField(verbose_name = _('Wskaźnik'))
+    shortcut = models.CharField(max_length=50, verbose_name = _('Krótka nazwa'))
+    default_value = models.FloatField(default=0, verbose_name = _('Wartość domyślna'))
+    scaling_factor = models.FloatField(default=1.0, verbose_name = _('Współczynnik skalowania'))
+    pub_date = models.DateField( verbose_name = _('Data utworzenia'), default=datetime.date.today)
 
     def __str__(self):
         return self.shortcut
 
+    class Meta:
+        verbose_name = _('Wskaźnik')
+        verbose_name_plural = _('Wskaźniki')
+
 
 class IndicatorIntervals(models.Model):
-    start_date = models.DateField('Interval start date', default=datetime.date.today)
-    end_date = models.DateField('Interval end date', default=datetime.date.today)
-    comment = models.TextField(default="")
+    start_date = models.DateField('Data początku okresu', default=datetime.date.today)
+    end_date = models.DateField('Data konca okresu', default=datetime.date.today)
+    comment = models.TextField(default="", verbose_name = _('Uwagi'))
 
     def __str__(self):
         return str(self.start_date.month) + ":" + str(self.start_date.year) + " - " + \
                str(self.end_date.month) + ":" + str(self.end_date.year)
+
+    class Meta:
+        verbose_name = _('Okres wskaźnika')
+        verbose_name_plural = _('Okresy wskaźników')
 
 
 class FacultyIndicators(models.Model):
@@ -77,6 +93,10 @@ class FacultyIndicators(models.Model):
     def __str__(self):
         return self.faculty.shortcut + " : " + self.indicator.shortcut
 
+    class Meta:
+        verbose_name = _('Wskaźnik wydziałowy')
+        verbose_name_plural = _('Wskaźniki wydziałowe')
+
 
 # sender - The model class. (MyModel)
 # instance - The actual instance being saved.
@@ -100,7 +120,7 @@ def faculty_post_save(sender, instance, created, *args, **kwargs):
                                                                 significance_coefficient = 0, ease_coefficient=0,
                                                                 value = 0.0, time_interval_id=inter.id,
                                                                 pub_date = datetime.datetime.now())
-            new_relation.save()
+                new_relation.save()
 
 
 @receiver(signals.post_save, sender=IndicatorIntervals)
@@ -115,7 +135,7 @@ def interval_post_save(sender, instance, created, *args, **kwargs):
                                                                 significance_coefficient = 0, ease_coefficient=0,
                                                                 value = 0.0, time_interval_id = instance.id,
                                                                 pub_date = datetime.datetime.now())
-            new_relation.save()
+                new_relation.save()
 
 
 @receiver(signals.post_save, sender=Indicator)
@@ -130,7 +150,7 @@ def indicator_post_save(sender, instance, created, *args, **kwargs):
                                                                 significance_coefficient = 0, ease_coefficient=0,
                                                                 value = 0.0, time_interval_id = i.id,
                                                                 pub_date = datetime.datetime.now())
-            new_relation.save()
+                new_relation.save()
 
 
 @receiver(signals.post_save,sender=FacultyIndicators)

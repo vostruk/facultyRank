@@ -7,8 +7,8 @@ from django.views import generic
 from django.template import *
 from chartit import DataPool, Chart
 from datetime import datetime
-reload(sys)
-sys.setdefaultencoding('utf-8')
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 
 class IndexView(generic.ListView):

@@ -6,8 +6,8 @@ from django.utils.translation import ugettext_lazy as _
 from .models import University, Faculty, Indicator, FacultyIndicators, IndicatorIntervals
 
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 
 class FacultyAdmin(admin.ModelAdmin):
@@ -18,7 +18,7 @@ class FacultyAdmin(admin.ModelAdmin):
 class RelatedFacultyFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = _('Related faculty')
+    title = _('Wydział')
 
     parameter_name = 'faculty'
 
@@ -40,7 +40,7 @@ class RelatedFacultyFilter(admin.SimpleListFilter):
 class CorrespondingDateFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = _('Indicators date interval')
+    title = _('Okres')
 
     parameter_name = 'time_interval'
 
@@ -152,8 +152,8 @@ class FacultyIndicatorsAdmin(admin.ModelAdmin):
         return response
 
     actions = [export_csv, export_xlsx]
-    export_xlsx.short_description = u"Export as XLSX"
-    export_csv.short_description = u"Export as CSV"
+    export_xlsx.short_description = u"Eksport do XLSX"
+    export_csv.short_description = u"Eksport do CSV"
 
 
 admin.site.register(University)
