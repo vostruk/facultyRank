@@ -20,15 +20,15 @@
     <!-- Header -->
     <div id="header">
         <div id="branding">
-        <h1>Welcome to University Internationalization ranking page</h1>
+        <h1>Witamy na stronie wskaźników umiędzynarodowienia uniwersytetów</h1>
         </div>
 
-        {% block nav-global %}{% endblock %}
+        {% block nav-global %}  <a href="{% url 'university:calcMethod' %}">  Metoda wyliczania rankingów </a>   / <a href="{% url 'university:people' %}">  Osoby odpowiedzialni </a>{% endblock %}
     </div>
     <!-- END Header -->
  <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Click on the university to see faculties view</h1>{% endif %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Wybierz uniwersytet dla obejrzenia rankingów jego wydziałów</h1>{% endif %}{% endblock %}
 
 
 <div class="results">

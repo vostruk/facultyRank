@@ -1,0 +1,106 @@
+{% load i18n admin_static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>Welcome to home page</title>
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelist.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
+{% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+  data-admin-utc-offset="{% now "Z" %}">
+
+<!-- Container -->
+<div id="container">
+
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        <h1>Witamy na stronie wskaźników umiędzynarodowienia uniwersytetów</h1>
+        </div>
+
+        {% block nav-global %}  <a href="{% url 'university:index' %}">  Strona główna </a>   / <a href="{% url 'university:people' %}">  Osoby odpowiedzialni </a>{% endblock %}
+    </div>
+    <!-- END Header -->
+ <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}Metoda wyliczania rankingów{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>  Metodologia, określenie zagregowanego wskaźnika
+   poziomu umiędzynarodowienia i metoda obliczania
+   wskaźników jakościowych
+</h1>{% endif %}{% endblock %}
+
+
+
+<h2> Sprawdzenie zgodności z przyjętą metodologią</h2>
+
+Podstawą metodologiczną systemu wskaźnikowego pomiaru umiędzynarodowienia na poziomie Wydziału było założenie, że będzie on pośrednio wspierał realizację celów operacyjnych Strategii Rozwoju Politechniki Warszawskiej, związanych z umiędzynarodowieniem Uczelni (patrz punkt 5 raportu z 28 czerwca 2013 r. i w szczególności Rys. 1 na stronie 18 tego raportu).
+
+Autorzy systemu kierowali się przy tym zasadą klasyfikacji i sekwencji wskaźników ilustrowaną schematem jak niżej.
+
+<br/>
+Oba powyższe założenia zostały szczegółowo opisane i wyjaśnione we wcześniejszym raporcie z 28 czerwca 2013 r..
+<br/>
+Testy pilotażowe przeprowadzone na 3 Wydziałach Uczelni nie wpłynęły na zmianę powyższych założeń metodologicznych. Zmiany w definicji i uszczegółowienie opisów poszczególnych wskaźników nie miały na nie praktycznego wpływu.
+<br/>
+Zaktualizowaną relację proponowanych wskaźników systemu i celów operacyjnych Strategii Rozwoju PW do roku 2020 ilustruje Załącznik nr 10 (Matryca wskaźników).
+W stosunku do wersji prezentowanej w poprzednim raporcie wprowadzone zostały jedynie niewielkie zmiany dotyczące klasyfikacji wskaźników w układzie wkład>działanie>wynik. Treść załącznika wyraźnie wskazuje na wyraźne powiązanie systemu wskaźników z celami operacyjnymi Strategii Rozwoju PW do roku 2020, dotyczącymi umiędzynarodowienia Uczelni.
+
+Proponowany system jednoznacznie wpisuje się w realizację założeń Strategii Rozwoju PW.
+
+<br/>
+
+
+<h2> Indeks Giniego</h2>
+
+Współczynnik Giniego, indeks Giniego, wskaźnik Giniego – stosowana w statystyce (i jej zastosowaniach, takich jak ekonometria) miara koncentracji (nierównomierności) rozkładu zmiennej losowej (za http://pl.wikipedia.org/wiki/Współczynnik_Giniego). Nazwa wskaźnika pochodzi od nazwiska jego twórcy, włoskiego statystyka, Corrado Giniego.
+W ekonometrii indeks Giniego nosi też nazwę Wskaźnika Nierówności Społecznej. Indeks Giniego stosowany jest często w ekonometrii do liczbowego wyrażania nierównomiernego rozkładu dóbr, w szczególności nierównomiernego rozkładu dochodu np. gospodarstw domowych.
+Wzór do policzenia współczynnika Giniego to (http://en.wikipedia.org/wiki/Gini_coefficient):
+
+gdzie wartości yi (w naszym przypadku wartości wskaźników poziomu umiędzynarodowienia jednostek Uczelni) są posortowane w porządku niemalejącym.
+Właściwości:
+współczynnik Giniego przyjmuje wartości z przedziału [0; 1], często jednak wyraża się go w procentach,
+wartość zerowa współczynnika wskazuje na pełną równomierność rozkładu,
+wzrost wartości współczynnika oznacza wzrost nierówności rozkładu,
+Przydatność indeksu Giniego w zastosowaniach do zestawu wskaźników poziomu umiędzynarodowienia jednostek Uczelni:
+funkcja kontrolna przy obliczaniu znormalizowanych wartości wskaźników poziomu umiędzynarodowienia jednostek Uczelni – indeksy Giniego dla zestawu danych oryginalnych i znormalizowanych muszą mieć tę samą wartość, oznaczającą ten sam rozkład danych
+funkcja analityczna – jeżeli obliczona wartość indeksu Giniego dla danego wskaźnika poziomu umiędzynarodowienia jednostek Uczelni ma niską wartość (w skrajnym przypadku wartość 0 oznacza, że każdy wydział miał tę samą oryginalną wartość wskaźnika), to można wyłączyć ten wskaźnik z zestawu wskaźników, jako nieistotny (nie zmieniający globalnej oceny).
+wysoka wartość indeksu Giniego zwraca uwagę na obszary największego zróżnicowania jednostek, co jest istotne w procesie zarządzania procesem internacjonalizacji Uczelni.
+<h2>Algorytmy normalizacji wskaźników poziomu
+         umiędzynarodowienia jednostek Uczelni</h2>
+
+Poniżej  zostaną przedstawione dwa algorytmy normalizacji wskaźników poziomu umiędzynarodowienia jednostek Uczelni, które rzutują dziedziny wartości tych wskaźników na przedział liczbowy <0;1>.
+
+<br/>
+Dla każdego wskaźnika bierzemy pod uwagę wszystkie jego wartości – każda związana z mierzoną jednostką (wydziałem). Znormalizowana wartość (dotycząca jednostki) jest mnożona przez wartość wagi związanej z danym wskaźnikiem (waga z kolei może być funkcją wielu czynników, np. uwzględniać ważność, stopień trudności pozyskania danej, jej wiarygodność itp. )
+
+Rozkład wartości znormalizowanych jest taki sam jak rozkład wartości oryginalnych danego wskaźnika.
+
+<br/>
+
+<h3> Pierwszy algorytm normalizacji wskaźników</h3>
+
+Pierwszy algorytm normalizacji wskaźników polega na przypisaniu maksymalnej oryginalnej wartości danego wskaźnika znormalizowanej wartości wynoszącej 1, a inne oryginalne wartości uzyskują w dziedzinie znormalizowanej wartości proporcji do wielkości maksymalnej w dziedzinie wartości oryginalnych. Znaczenie znormalizowanej wartości – stosunek oryginalnej wartości do maksymalnej wartości danego wskaźnika.
+
+Weźmy n wartości i-tego wskaźnika (dla n wydziałów)
+, , ...,                    gdzie dla każdego j    
+Wybieramy z nich wartość maksymalną
+ = max (, , ..., )
+
+Dla każdego j obliczamy wartość znormalizowaną wskaźnika
+ =              jeśli 
+Dla  wszystkie wartości znormalizowane wynoszą zero.
+
+        <br class="clear" />
+    </div>
+
+   {% block footer %}<div id="footer"></div>{% endblock %}
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+

@@ -38,7 +38,8 @@
         <h1>Faculties of {% with object_list|first as first_object %}   {{ first_object.university }} {% endwith %} view </h1>
         </div>
 
-        {% block nav-global %}{% endblock %}
+        {% block nav-global %}  <a href="{% url 'university:index' %}">  Strona główna </a>   / <a href="{% url 'university:calcMethod' %}">  Metoda wyliczania rankingów </a> /<a href="{% url 'university:people' %}">  Osoby odpowiedzialni </a>{% endblock %}
+
     </div>
     <!-- END Header -->
 

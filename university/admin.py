@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 
 from django.contrib import admin
@@ -6,8 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from .models import University, Faculty, Indicator, FacultyIndicators, IndicatorIntervals
 
 
-#reload(sys)
-#sys.setdefaultencoding('utf-8')
 
 
 class FacultyAdmin(admin.ModelAdmin):
@@ -99,8 +98,8 @@ class FacultyIndicatorsAdmin(admin.ModelAdmin):
                 smart_str(obj.faculty),
                 smart_str(obj.indicator),
                 smart_str(obj.value),
-                smart_str(obj.time_interval_start),
-                smart_str(obj.time_interval_end),
+                smart_str(obj.time_interval.start_date),
+                smart_str(obj.time_interval.end_date),
             ])
         return response
 
@@ -139,8 +138,8 @@ class FacultyIndicatorsAdmin(admin.ModelAdmin):
                 str(obj.faculty),
                 str(obj.indicator),
                 obj.value,
-                obj.time_interval_start,
-                obj.time_interval_end,
+                obj.time_interval.start_date,
+                obj.time_interval.end_date,
                 obj.comment,
             ]
             for col_num in xrange(len(row)):
