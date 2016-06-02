@@ -1,0 +1,19 @@
+.submit-row a.back-button {
+    display: block;
+    background: #79AEC8;
+    border-radius: 4px;
+    padding: 10px 15px;
+    height: 15px;
+    line-height: 15px;
+    color: #fff;
+        float: left;
+}
+.submit-row {
+    padding: 12px 14px;
+    margin: 0 0 20px;
+    background: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    text-align: right;
+    overflow: hidden;
+}
