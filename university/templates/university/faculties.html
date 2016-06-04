@@ -35,7 +35,7 @@
     <!-- Header -->
     <div id="header">
         <div id="branding">
-        <h1>Faculties of {% with object_list|first as first_object %}   {{ first_object.university }} {% endwith %} view </h1>
+        <h1>Wydziały uniwersytetu {% with object_list|first as first_object %}   {{ first_object.university }} {% endwith %} </h1>
         </div>
 
         {% block nav-global %}  <a href="{% url 'university:index' %}">  Strona główna </a>   / <a href="{% url 'university:calcMethod' %}">  Metoda wyliczania rankingów </a> /<a href="{% url 'university:people' %}">  Osoby odpowiedzialni </a>{% endblock %}
@@ -48,7 +48,7 @@
     <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Click on the faculty to see detail indicators view</h1>{% endif %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Wybierz wydział, żeby zobaczyć jego wskaźniki</h1>{% endif %}{% endblock %}
 
     <div class="results">
 <table id="result_list">
@@ -65,7 +65,7 @@
        </div>
      {% endif %}
    {% endif %}
-   <div class="text"><a href="{{ header.url_primary }}">Faculty Name</a></div>
+   <div class="text"><a href="{{ header.url_primary }}">Nazwa wydziału</a></div>
    <div class="clear"></div>
 </th>
 
@@ -79,7 +79,7 @@
        </div>
      {% endif %}
    {% endif %}
-   <div class="text"><a href="{{ header.url_primary }}">Short name</a></div>
+   <div class="text"><a href="{{ header.url_primary }}">Nazwa skrócona</a></div>
    <div class="clear"></div>
 </th>
 
@@ -91,7 +91,7 @@
          <a href="{{ header.url_toggle }}" class="toggle {% if header.ascending %}ascending{% else %}descending{% endif %}" title="{% trans "Toggle sorting" %}"></a>
        </div>
 
-   <div class="text"><a href="?o=3">Total Rank</a></div>
+   <div class="text"><a href="?o=3">Ranking skumulowany</a></div>
    <div class="clear"></div>
 </th>
 </tr>
@@ -108,7 +108,7 @@
     <br>
 
             <div class="submit-row">
-            <a class="back-button" href="{% url 'university:index' %}"  >Back to Index Page </a>
+            <a class="back-button" href="{% url 'university:index' %}"  >Powrót do strony głównej </a>
             </div>
 
         <br class="clear" />

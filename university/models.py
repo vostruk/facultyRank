@@ -42,6 +42,7 @@ class Faculty(models.Model):
 class Indicator(models.Model):
     given_id = models.CharField(max_length=10, default="", unique=True, verbose_name = _('Nadany identyfikator'))
     name = models.TextField(verbose_name = _('Wskaźnik'))
+    is_public = models.BooleanField(default=True, verbose_name = _('Pokazywany na stronie publicznej'))
     shortcut = models.CharField(max_length=50, verbose_name = _('Krótka nazwa'))
     default_value = models.FloatField(default=0, verbose_name = _('Wartość domyślna'))
     scaling_factor = models.FloatField(default=1.0, verbose_name = _('Współczynnik skalowania'))
@@ -56,8 +57,8 @@ class Indicator(models.Model):
 
 
 class IndicatorIntervals(models.Model):
-    start_date = models.DateField('Data początku okresu', default=datetime.date.today)
-    end_date = models.DateField('Data konca okresu', default=datetime.date.today)
+    start_date = models.DateField('Data rozpoczęcia okresu', default=datetime.date.today)
+    end_date = models.DateField('Data zakończenia okresu', default=datetime.date.today)
     comment = models.TextField(default="", verbose_name = _('Uwagi'))
 
     def __str__(self):
@@ -70,14 +71,14 @@ class IndicatorIntervals(models.Model):
 
 
 class FacultyIndicators(models.Model):
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
-    indicator = models.ForeignKey(Indicator, on_delete=models.CASCADE)
-    significance_coefficient = models.IntegerField(default=0)
-    ease_coefficient = models.IntegerField(default=0)
-    value = models.FloatField(default=0)
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE,  verbose_name = _('Wydział'))
+    indicator = models.ForeignKey(Indicator, on_delete=models.CASCADE,  verbose_name = _('Wskaźnik'))
+    significance_coefficient = models.IntegerField(default=0, verbose_name = _('Współczynnik wag'))
+    ease_coefficient = models.IntegerField(default=0, verbose_name = _('Współczynnik latwości'))
+    value = models.FloatField(default=0, verbose_name = _('Wartość'))
     time_interval = models.ForeignKey(IndicatorIntervals, on_delete=models.CASCADE)
-    comment = models.TextField(default="")
-    pub_date = models.DateField('date published', default=datetime.date.today)
+    comment = models.TextField(default="", verbose_name = _('Uwagi'))
+    pub_date = models.DateField('Dotyczący okres', default=datetime.date.today)
 
     def full_name(self):
         return self.indicator.name

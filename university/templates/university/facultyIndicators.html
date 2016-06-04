@@ -13,11 +13,11 @@
 
      <!-- code to include the highcharts and jQuery libraries goes here -->
     <!-- load_charts filter takes a comma-separated list of id's where -->
-    <!-- the charts need to be rendered to                            -->
+    <!-- the charts need to be rendered to         ,PieChartContainer                    -->
  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="http://code.highcharts.com/highcharts.js" type="text/javascript"></script>
      {% load chartit %}
-    {{ indicatorsChart|load_charts:"LineChartContainer, PieChartContainer" }}
+    {{ indicatorsChart|load_charts:"LineChartContainer" }}
 
 
 
@@ -34,7 +34,7 @@
     <!-- Header -->
     <div id="header">
         <div id="branding">
-        <h1>Indicators of {{ chosen_faculty.name }} view </h1>
+        <h1>Wskaźniki wydzialu {{ chosen_faculty.name }} </h1>
         </div>
 
         {% block nav-global %}  <a href="{% url 'university:index' %}">  Strona główna </a>   / <a href="{% url 'university:calcMethod' %}">  Metoda wyliczania rankingów </a> /<a href="{% url 'university:people' %}">  Osoby odpowiedzialni </a>{% endblock %}
@@ -46,27 +46,39 @@
     <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Wybrałesz wydział {{ chosen_faculty.name }}</h1>{% endif %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Tutaj znajdziesz wszystkie niezbędne informacje o wskaźnikach wydziału: {{ chosen_faculty.name }}</h1>{% endif %}{% endblock %}
 
+
+    {% if times_list.count > 1 %}
+                <br><div id='LineChartContainer'> Chart will be rendered here </div><br><br><br>
+            {% endif %}
             <table id="content-main">
+
+
                 <tr> <td>Nazwa wskaźnika </td> <td>Wartość </td> <td> Okres od </td><td> Okres do</td><td> Dodany dnia</td></tr>
 
+
             {% for t in times_list %}
+                <tr style="min-height:2px;padding:2px;background-color:#417690;"><td></td><td></td><td></td><td></td><td></td></tr>
+
              {% for i in indicators_list %}
                  {% for fi in faculty_indicators_list %}
-                     {% if i.id == fi.indicator.id and fi.time_interval.id == t.id%}
+                     {% if i.id == fi.indicator.id and fi.time_interval.id == t.id and fi.indicator.is_public == True %}
                      <tr> <td>{{ i.shortcut }} </td> <td>{{ fi.value }} </td><td> {{ t.start_date }}</td><td> {{ t.end_date }}</td> <td> {{ fi.pub_date }}</td></tr>
                      {% endif  %}
                  {% endfor %}
              {% endfor %}
-            {% endfor %}
+           {% endfor %}
 
 
-            </table>     <br><div id='PieChartContainer'> Pie Chart will be rendered here </div>
+            </table>
 
 
 
-        <div id='LineChartContainer'> Chart will be rendered here </div>
+<!-- <div id='PieChartContainer'> Pie Chart will be rendered here </div> -->
+
+
+
 
             <div class="submit-row">
             <a class="back-button" href="{{request.META.HTTP_REFERER}}"  >Powrót do wydziałów </a>

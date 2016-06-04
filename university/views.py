@@ -7,6 +7,7 @@ from django.views import generic
 from django.template import *
 from chartit import DataPool, Chart
 from datetime import datetime
+from datetime import date
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -52,7 +53,7 @@ class FacultyIndicatorsView(generic.ListView):
                    'source': FacultyIndicators.objects.filter(indicator_id=i.id, faculty_id=self.kwargs['faculty_id_chose'])},
                   'terms': [
                       {str(i.shortcut):'value'},
-                      {'time_interval'+str(i.id):'time_interval__end_date'}
+                      {'time_interval'+str(i.id) : 'time_interval__end_date'}
 
                     ]})
             termsAll['time_interval'+str(i.id)] = [str(i.shortcut)]
@@ -73,11 +74,11 @@ class FacultyIndicatorsView(generic.ListView):
                 series_options = series_optAll,
                 chart_options =
                   {'title': {
-                       'text': 'Indicators of university'},
+                       'text': 'Zmiana wskaźników w czasie'},
                    'xAxis': {
                         'title': {
                            'text': 'Time period'}}}#,
-             #   x_sortf_mapf_mts=(None, lambda i: datetime.fromtimestamp(i).strftime("%H:%M"), False)
+                   # x_sortf_mapf_mts=(None, lambda inr: datetime.fromtimestamp(inr).strftime("%H:%M"), False)
         )
 
 
@@ -88,7 +89,8 @@ class FacultyIndicatorsView(generic.ListView):
             DataPool(
                 series=
                 [{'options': {
-                    'source':FacultyIndicators.objects.filter(time_interval_id=last_period.id, faculty_id=self.kwargs['faculty_id_chose'])},
+                    'source':FacultyIndicators.objects.filter(time_interval_id=last_period.id, faculty_id=33#self.kwargs['faculty_id_chose']
+                            )},
                   'terms': [
                     'indicator__shortcut',
                     'value']}
@@ -108,7 +110,8 @@ class FacultyIndicatorsView(generic.ListView):
               {'title': {
                    'text': 'Udzial wskazkikow w ogolnym rankingu'}},
         )
-        context['indicatorsChart'] = [chtIndicatorsTime, chtPie]
+        context['indicatorsChart'] = [chtIndicatorsTime]#,
+                                   #   chtPie]
         return context
 
 
