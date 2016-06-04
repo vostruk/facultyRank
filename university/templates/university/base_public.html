@@ -1,0 +1,56 @@
+{% load i18n admin_static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+{% block title %}
+<title>Wskaźniki umiędzynarodowienia</title>
+{% endblock title %}
+
+ <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelist.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/additions.css" %}" />
+
+    {% block extrastyle %}
+
+{% endblock extrastyle%}
+
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+  data-admin-utc-offset="{% now "Z" %}">
+
+<!-- Container -->
+<div id="container">
+
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+            {% block branding %}
+                 <h1>Witamy na stronie wskaźników umiędzynarodowienia uniwersytetów</h1>
+            {% endblock branding %}
+        </div>
+
+        {% block nav-global %}<a href="{% url 'university:index' %}">  Strona główna </a>   /  <a href="{% url 'university:calcMethod' %}">  Metoda wyliczania rankingów </a>   / <a href="{% url 'university:people' %}">  Osoby odpowiedzialni </a>{% endblock %}
+    </div>
+    <!-- END Header -->
+ <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Wybierz uniwersytet dla obejrzenia rankingów jego wydziałów</h1>{% endif %}{% endblock %}
+
+{% block maincontent %}
+
+{% endblock maincontent %}
+        <br class="clear" />
+    </div>
+
+   {% block footer %}<div id="footer"> </div>{% endblock %}
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+

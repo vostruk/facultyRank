@@ -1,55 +1,24 @@
+{% extends "university/base_public.html" %}
+{% block title %}
+<title>Wydziały | Wskaźniki umiędzynarodowienia </title>
 
-{% load i18n admin_static %}<!DOCTYPE html>
-{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
-<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
-<head>
-<title>Faculties view</title>
-<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
-<link rel="stylesheet" type="text/css" href="{% static "css/additions.css" %}" />
- <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{% endblock title %}
 
-<script type="text/javascript" src="{% static "admin/js/core.js" %}"></script>
-<script type="text/javascript" src="{% static "admin/js/vendor/jquery/jquery.js" %}"></script>
-<script type="text/javascript" src="{% static "admin/js/jquery.init.js" %}"></script>
-<script type="text/javascript" src="{% static "admin/js/admin/RelatedObjectLookups.js"%}"></script>
-<script type="text/javascript" src="{% static "admin/js/actions.js"%}"></script>
-<script type="text/javascript" src="{% static "admin/js/urlify.js"%}"></script>
-<script type="text/javascript" src="{% static "admin/js/prepopulate.js"%}"></script>
-<script type="text/javascript" src="{% static "admin/js/vendor/xregexp/xregexp.min.js"%}"></script>
-  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
-    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
 
-{% block extrastyle %}{% endblock %}
-{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
-{% block extrahead %}{% endblock %}
-{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
-</head>
 {% load i18n %}
 
-<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
-  data-admin-utc-offset="{% now "Z" %}">
 
-<!-- Container -->
-<div id="container">
-
-    <!-- Header -->
-    <div id="header">
-        <div id="branding">
+ {% block branding %}
         <h1>Wydziały uniwersytetu {% with object_list|first as first_object %}   {{ first_object.university }} {% endwith %} </h1>
-        </div>
 
-        {% block nav-global %}  <a href="{% url 'university:index' %}">  Strona główna </a>   / <a href="{% url 'university:calcMethod' %}">  Metoda wyliczania rankingów </a> /<a href="{% url 'university:people' %}">  Osoby odpowiedzialni </a>{% endblock %}
-
-    </div>
-    <!-- END Header -->
+ {% endblock branding %}
 
 
 
-    <!-- Content -->
-    <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}
         {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% else %}<h1>Wybierz wydział, żeby zobaczyć jego wskaźniki</h1>{% endif %}{% endblock %}
 
+{% block maincontent %}
     <div class="results">
 <table id="result_list">
 <thead>
@@ -110,15 +79,4 @@
             <div class="submit-row">
             <a class="back-button" href="{% url 'university:index' %}"  >Powrót do strony głównej </a>
             </div>
-
-        <br class="clear" />
-    </div>
-    <!-- END Content -->
-
-    {% block footer %}<div id="footer"></div>{% endblock %}
-</div>
-<!-- END Container -->
-
-</body>
-</html>
-
+{% endblock maincontent %}

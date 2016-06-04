@@ -74,7 +74,7 @@ class FacultyIndicators(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE,  verbose_name = _('Wydział'))
     indicator = models.ForeignKey(Indicator, on_delete=models.CASCADE,  verbose_name = _('Wskaźnik'))
     significance_coefficient = models.IntegerField(default=0, verbose_name = _('Współczynnik wag'))
-    ease_coefficient = models.IntegerField(default=0, verbose_name = _('Współczynnik latwości'))
+    ease_coefficient = models.IntegerField(default=0, verbose_name = _('Współczynnik łatwości'))
     value = models.FloatField(default=0, verbose_name = _('Wartość'))
     time_interval = models.ForeignKey(IndicatorIntervals, on_delete=models.CASCADE)
     comment = models.TextField(default="", verbose_name = _('Uwagi'))
