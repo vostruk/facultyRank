@@ -6,7 +6,7 @@ import datetime
 from django.dispatch import receiver
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
-from django.shortcuts import get_list_or_404
+from django.shortcuts import get_list_or_404, get_object_or_404
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
@@ -76,9 +76,9 @@ class FacultyIndicators(models.Model):
     significance_coefficient = models.IntegerField(default=0, verbose_name = _('Współczynnik wag'))
     ease_coefficient = models.IntegerField(default=0, verbose_name = _('Współczynnik łatwości'))
     value = models.FloatField(default=0, verbose_name = _('Wartość'))
-    time_interval = models.ForeignKey(IndicatorIntervals, on_delete=models.CASCADE)
+    time_interval = models.ForeignKey(IndicatorIntervals, on_delete=models.CASCADE, verbose_name = _('Dotyczący okres'))
     comment = models.TextField(default="", verbose_name = _('Uwagi'))
-    pub_date = models.DateField('Dotyczący okres', default=datetime.date.today)
+    pub_date = models.DateField('Data wpisu', default=datetime.date.today)
 
     def full_name(self):
         return self.indicator.name
@@ -157,9 +157,15 @@ def indicator_post_save(sender, instance, created, *args, **kwargs):
 
 @receiver(signals.post_save,sender=FacultyIndicators)
 def faculty_indicators_post_save(sender, instance, created, *args, **kwargs):
-    print("Changing faculty total rank")
+    print("Changing faculty and university total rank")
     indicators = get_list_or_404(FacultyIndicators, faculty_id = instance.faculty.id)
     instance.faculty.total_rank = 0;
     for i in indicators:
         instance.faculty.total_rank += i.value*i.indicator.scaling_factor
     instance.faculty.save()
+    uni = get_object_or_404(University, id = instance.faculty.university.id)
+    facs = get_list_or_404(Faculty, university_id = uni.id)
+    uni.total_rank = 0
+    for f in facs:
+        uni.total_rank+=f.total_rank
+    uni.save()

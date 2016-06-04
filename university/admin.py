@@ -62,7 +62,7 @@ class FacultyIndicatorsAdmin(admin.ModelAdmin):
         return []
 
 #    readonly_fields= []
-    fields = ['indicator', 'faculty', 'value', 'pub_date', 'time_interval']
+    fields = ['indicator', 'faculty', 'value', 'significance_coefficient', 'ease_coefficient', 'time_interval', 'pub_date']
     list_display = ('indicator', 'faculty', 'value', 'time_interval')
     list_filter = (RelatedFacultyFilter, 'value', 'indicator', CorrespondingDateFilter)
     search_fields = ['indicator__name']

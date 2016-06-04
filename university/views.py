@@ -39,9 +39,9 @@ class FacultyIndicatorsView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(FacultyIndicatorsView, self).get_context_data(**kwargs)
         context['chosen_faculty'] = get_object_or_404(Faculty, pk=self.kwargs['faculty_id_chose'])
-        context['faculty_indicators_list'] = get_list_or_404(FacultyIndicators, faculty_id=self.kwargs['faculty_id_chose'])
+       # context['faculty_indicators_list'] = get_list_or_404(FacultyIndicators, faculty_id=self.kwargs['faculty_id_chose'])
         indicators_list = Indicator.objects.all()
-        context['indicators_list'] = indicators_list
+        #context['indicators_list'] = indicators_list
         context['times_list'] = IndicatorIntervals.objects.order_by('-end_date')
         times = IndicatorIntervals.objects.all()
 
@@ -81,16 +81,15 @@ class FacultyIndicatorsView(generic.ListView):
                    # x_sortf_mapf_mts=(None, lambda inr: datetime.fromtimestamp(inr).strftime("%H:%M"), False)
         )
 
-
-
         last_period = IndicatorIntervals.objects.order_by('-end_date')[0]
 
         indicatorsPieData = \
             DataPool(
                 series=
                 [{'options': {
-                    'source':FacultyIndicators.objects.filter(time_interval_id=last_period.id, faculty_id=33#self.kwargs['faculty_id_chose']
-                            )},
+                    'source':FacultyIndicators.objects.filter(time_interval_id=last_period.id, faculty_id=self.kwargs['faculty_id_chose']
+                            )
+                },
                   'terms': [
                     'indicator__shortcut',
                     'value']}
@@ -101,17 +100,20 @@ class FacultyIndicatorsView(generic.ListView):
             series_options =
               [{'options':{
                   'type': 'pie',
-                  'stacking': False},
+                  'stacking': False
+                },
                 'terms':{
                   'indicator__shortcut': [
                     'value']
                   }}],
             chart_options =
               {'title': {
-                   'text': 'Udzial wskazkikow w ogolnym rankingu'}},
+                   'text': 'Udzial wskazkikow w ogolnym rankingu'}}
         )
-        context['indicatorsChart'] = [chtIndicatorsTime]#,
-                                   #   chtPie]
+        context['indicatorsChart'] = [
+                                      chtIndicatorsTime,
+                                      chtIndicatorsTime
+                                    ]
         return context
 
 
