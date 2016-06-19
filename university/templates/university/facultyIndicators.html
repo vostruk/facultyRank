@@ -31,7 +31,7 @@
     {% if times_list.count > 1 %}
                 <br><div id='LineChartContainer'> Chart will be rendered here </div><br><br><br>
             {% endif %}
-            <table id="content-main">
+            <table id="content-main" style="width:100%">
 
 <thead>
                 <tr> <th><div class="text">Nazwa wskaźnika</div> </th> <th>Wartość </th><th>Współczynnik wag</th><th>Współczynnik łatwości</th> <th> Okres od </th><th> Okres do</th></tr>
@@ -52,8 +52,9 @@
 <tbody>
 
             </table>
+       {# .... **Now the pagination section** ...<div id='PieChartContainer'> Pie Chart will be rendered here </div>. #}
 
- <div id='PieChartContainer'> Pie Chart will be rendered here </div>
+
 
             <div class="submit-row">
             <a class="back-button" href="{{request.META.HTTP_REFERER}}"  >Powrót do wydziałów </a>

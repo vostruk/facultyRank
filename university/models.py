@@ -11,9 +11,9 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 class University(models.Model):
-    name = models.CharField(max_length=200)
-    address = models.CharField(max_length=300)
-    total_rank = models.FloatField(default=0)
+    name = models.CharField(max_length=200, verbose_name = _('Nazwa'))
+    address = models.CharField(max_length=300, verbose_name = _('Adres'))
+    total_rank = models.FloatField(default=0,  verbose_name = _('Wynik rankingowy'))
     university_managers = models.ManyToManyField(User)
 
     def __str__(self):

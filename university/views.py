@@ -35,6 +35,7 @@ class FacultiesView(generic.ListView):
 class FacultyIndicatorsView(generic.ListView):
     model = FacultyIndicators
     template_name='university/facultyIndicators.html'
+    #paginate_by = IndicatorIntervals.objects.count()
 
     def get_context_data(self, **kwargs):
         context = super(FacultyIndicatorsView, self).get_context_data(**kwargs)

@@ -13,6 +13,26 @@ class FacultyAdmin(admin.ModelAdmin):
     fields = ['name', 'shortcut', 'university', 'faculty_managers']
     list_display = ('name', 'shortcut', 'total_rank', 'university')
 
+    def get_queryset(self, request):
+        qs = super(FacultyAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+                return qs
+        user_universities = request.user.university_set.all().values_list('id', flat=True)
+        print(user_universities)
+        uni_fac_set = Faculty.objects.exclude(university__id__in=user_universities).values_list('id', flat=True)  #user_university[1]
+        print(uni_fac_set)
+        return qs.exclude(pk__in = uni_fac_set)
+
+
+class IndicatorAdmin(admin.ModelAdmin):
+    list_display = ('shortcut', 'is_public', 'pub_date')
+
+class IntervalAdmin(admin.ModelAdmin):
+    list_display = ('get_name', 'comment')
+    def get_name(self, obj):
+        return obj.__str__()
+    get_name.short_description = 'Okres'
+  #  get_author.admin_order_field = 'book__author'
 
 class RelatedFacultyFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
@@ -35,6 +55,31 @@ class RelatedFacultyFilter(admin.SimpleListFilter):
             return queryset.filter(faculty_id=self.value())
         return queryset
 
+class RelatedUniversityFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = _('uniwersytet')
+
+    parameter_name = 'university'
+
+    def lookups(self, request, model_admin):
+        if request.user.is_superuser:
+            uall=University.objects.all()
+            return [(u.id, u.name) for u in uall]
+        l = []
+        for g in request.user.university_set.all():
+            l.append((g.id, g.name))
+        return l
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(id=self.value())
+        return queryset
+
+
+class UniversityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'total_rank', 'address')
+    list_filter = [RelatedUniversityFilter]
 
 class CorrespondingDateFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
@@ -74,7 +119,15 @@ class FacultyIndicatorsAdmin(admin.ModelAdmin):
         qs = super(FacultyIndicatorsAdmin, self).get_queryset(request)
         if request.user.is_superuser:
                 return qs
+        user_university = request.user.university_set.all()
+        uni_fac_set = Faculty.objects.filter(id__in=user_university)  #user_university[1]
+        #show faculties only from our university
         fl = FacultyIndicators.objects.exclude(faculty__id__in=request.user.faculty_set.all()).values_list('id', flat=True)
+        ul = FacultyIndicators.objects.filter(faculty__id__in=uni_fac_set)
+        s = set()
+        s |= set(fl)
+        s |= set(ul)
+        print(s)
         return qs.exclude(pk__in=fl)
 
     def export_csv(modeladmin, request, queryset):
@@ -155,9 +208,9 @@ class FacultyIndicatorsAdmin(admin.ModelAdmin):
     export_csv.short_description = u"Eksport do CSV"
 
 
-admin.site.register(University)
+admin.site.register(University, UniversityAdmin)
 admin.site.register(Faculty, FacultyAdmin)
-admin.site.register(Indicator)
-admin.site.register(FacultyIndicators,FacultyIndicatorsAdmin)
-admin.site.register(IndicatorIntervals)
+admin.site.register(Indicator, IndicatorAdmin)
+admin.site.register(FacultyIndicators, FacultyIndicatorsAdmin)
+admin.site.register(IndicatorIntervals, IntervalAdmin)
 
